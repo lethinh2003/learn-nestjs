@@ -16,7 +16,13 @@ export class UserService {
     return await this.userRepository.save(newUser);
   };
 
-  findAll(): Promise<User[]> {
+  findAll({
+    page = 1,
+    pageSize = 10,
+  }: {
+    page: number;
+    pageSize: number;
+  }): Promise<User[]> {
     return this.userRepository.find({
       select: {
         email: true,
@@ -25,6 +31,8 @@ export class UserService {
       order: {
         createdAt: 1,
       },
+      skip: (page - 1) * pageSize,
+      take: pageSize,
     });
   }
 
@@ -37,6 +45,14 @@ export class UserService {
       //   email: true,
       //   createdAt: true,
       // },
+    });
+  }
+
+  findOneByEmail(email: string) {
+    return this.userRepository.findOne({
+      where: {
+        email,
+      },
     });
   }
 
